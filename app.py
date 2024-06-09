@@ -9,14 +9,17 @@ def main():
         create_tables()
         print("Tables created")
 
-        author = Author("John")
+        author = Author(1, "John")
         print(f"Author created: ID ={author.id}, Name ={author.name}")
 
-        magazine = Magazine("Tech Weekly", "Technology News")
-        print(f"Magazine created: ID ={magazine.id}, Name ={magazine.name}")
+        magazine = Magazine(1,"Tech Weekly", "Technology News")
+        print(f"Magazine created: ID ={magazine.id}, Name ={magazine.name}, Category = {magazine.category}" )
 
-        article = Article("Python", "Python and Web Applications", author=author, magazine= magazine)
-        print(f"Article created: ID ={article.id}, Title ={article.title}, Content ={article.content}, Author={article.author.name}, Magazine={article.magazine.name}")
+        article = Article(1,"Python", "Python and Web Applications", 1,1)
+        print(f"Article created: ID ={article.id}, Title ={article.title}, Content ={article.content}, Author={article.author}, Magazine={article.magazine}")
+
+        author1 = Author.create( "John")
+        print(f"Author created: ID ={author1.id}, Name ={author1.name}")
 
     
     # Initialize the database and create tables
@@ -29,7 +32,9 @@ def main():
         print("Magazine's Contributors:", magazine.contributors())
         print("Magazine's Article Titles:", magazine.article_titles())
         print("Magazine's Contributing Authors:", magazine.contributing_authors())
-        print(Author.magazines(5))
+        print("Article's Authors:", article.author())
+        print("Article's Magazine:", article.magazine())
+ 
 
         
     except Exception as e:
