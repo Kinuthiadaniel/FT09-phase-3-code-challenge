@@ -22,9 +22,28 @@ class Author:
     
     @name.setter
     def name(self, name):
-        if not isinstance(name, str) and len(name):
+        if not isinstance(name, str) or len(name):
             raise ValueError("Name must be a string")
         self._name = name
+
+    def articles(self):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE author_id =?", (self._id,))
+        articles = cursor.fetchall()
+        conn.close()
+        return articles
+    
+    def magazines(self):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT DISTINCT magazines.* FROM magazines
+            JOIN articles ON articles.magazine_id = magazines.id
+            WHERE articles.author_id = ?""", (self._id,))
+        magazines = cursor.fetchall()
+        conn.close()
+        return magazines
+
 
 
 

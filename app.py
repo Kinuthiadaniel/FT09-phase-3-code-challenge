@@ -1,10 +1,11 @@
-from database.setup import create_tables
+from database.setup import create_tables,drop_table
 from models.article import Article
 from models.author import Author
 from models.magazine import Magazine
 
 def main():
     try:
+        drop_table()
         create_tables()
         print("Tables created")
 
@@ -28,6 +29,8 @@ def main():
         print("Magazine's Contributors:", magazine.contributors())
         print("Magazine's Article Titles:", magazine.article_titles())
         print("Magazine's Contributing Authors:", magazine.contributing_authors())
+        print(Author.magazines(5))
+
         
     except Exception as e:
         print("Error:", e)

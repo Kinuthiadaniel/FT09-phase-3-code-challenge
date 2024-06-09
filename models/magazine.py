@@ -36,7 +36,51 @@ class Magazine:
         if not isinstance(category, str) and len(category):
             raise ValueError("Category must be a string")
         self._category = category
-        
+
+    def articles(self):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM articles WHERE magazine_id =?", (self._id,))
+        articles = cursor.fetchall()
+        conn.close()
+        return articles  
+
+    def contributors(self):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT DISTINCT authors.* FROM authors
+            JOIN articles ON articles.author_id = authors.id
+            WHERE articles.magazine_id =?""", (self._id,))
+        authors = [row for row in cursor.fetchall()]
+        conn.close()
+        return authors
+    
+    def article_titles(self):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT title FROM articles WHERE magazine_id =?", (self._id,))
+        titles = [row["title"] for row in cursor.fetchall()]
+        if not titles:
+            titles = None
+        conn.close()
+        return titles
+    
+    def contributing_authors(self):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT authors.*, COUNT(articles.id) as article_count FROM authors
+            JOIN articles ON articles.author_id = authors.id
+            WHERE articles.magazine_id = ?
+            GROUP BY authors.id
+            HAVING article_count > 2
+            """, (self._id,))
+        authors = cursor.fetchall()
+        if not authors:
+            authors = None
+        conn.close()
+        return authors
+      
 
 
 
