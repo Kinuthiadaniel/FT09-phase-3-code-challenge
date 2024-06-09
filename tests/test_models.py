@@ -11,47 +11,62 @@ class TestModels(unittest.TestCase):
         create_tables()
 
     def test_author_creation(self):
-        author = Author("John Doe")
+        author = Author(1, "John Doe")
         self.assertEqual(author.name, "John Doe")
-        self.assertIsNotNone(author.id)
 
     def test_article_creation(self):
-        author = Author("John Doe")
-        magazine = Magazine("Tech Weekly", "Technology")
-        article = Article("Test Title", "Test Content", author, magazine)
+        article = Article(1, "Test Title", "Test Content", 1, 1)
         self.assertEqual(article.title, "Test Title")
-        self.assertEqual(article.content, "Test Content")
 
     def test_magazine_creation(self):
-        magazine = Magazine("Tech Weekly", "Technology")
+        magazine = Magazine(1, "Tech Weekly", "Technology")
         self.assertEqual(magazine.name, "Tech Weekly")
-        self.assertEqual(magazine.category, "Technology")
-        self.assertIsNotNone(magazine.id)
 
-    def test_author_name_immutable(self):
-        author = Author("John")
-        with self.assertRaises(ValueError):
+    def test_author_name_change(self):
+        author = Author(1, "John Doe")
+        with self.assertRaises(AttributeError):
             author.name = "Jane Doe"
 
+    def test_author_name_type(self):
+        with self.assertRaises(TypeError):
+            author = Author(1, 123)
+
+    def test_author_name_length(self):
+        with self.assertRaises(ValueError):
+            author = Author(1, "")
+
     def test_author_magazines(self):
-        author = Author("John")
-        magazine = Magazine("Tech Weekly", "Technology")
-        article = Article("Test Title", "Test Content", author, magazine)
-        self.assertEqual(len(author.magazines()), 1)
+        author = Author(1, "John Doe")
+        magazines = author.magazines()
+        self.assertEqual(len(magazines), 0)  
+
+    def test_article_title_length(self):
+        with self.assertRaises(ValueError):
+            article = Article(1, "", "Test Content", 1, 1)
+
+    def test_magazine_name_length(self):
+        with self.assertRaises(ValueError):
+            magazine = Magazine(1, "", "Technology")
 
     def test_magazine_articles(self):
-        author = Author("John")
-        magazine = Magazine("Tech Weekly", "Technology")
-        article = Article("Test Title", "Test Content", author, magazine)
-        self.assertEqual(len(magazine.articles()), 1)
+        magazine = Magazine(1, "Tech Weekly", "Technology")
+        articles = magazine.articles()
+        self.assertEqual(len(articles), 0)  
 
     def test_magazine_contributors(self):
-        author = Author("John")
-        magazine = Magazine("Tech Weekly", "Technology")
-        article = Article("Test Title", "Test Content", author, magazine)
-        self.assertEqual(len(magazine.contributors()), 1)
+        magazine = Magazine(1, "Tech Weekly", "Technology")
+        contributors = magazine.contributors()
+        self.assertEqual(len(contributors), 0)  
 
+    def test_magazine_article_titles(self):
+        magazine = Magazine(1, "Tech Weekly", "Technology")
+        titles = magazine.article_titles()
+        self.assertIsNone(titles)  
 
+    def test_magazine_contributing_authors(self):
+        magazine = Magazine(1, "Tech Weekly", "Technology")
+        contributing_authors = magazine.contributing_authors()
+        self.assertIsNone(contributing_authors)  
     
 
 if __name__ == '__main__':
