@@ -3,14 +3,14 @@ from __init__ import CURSOR, CONN
 class Magazine:
     all = {}
 
-    def __init__(self, id, name, category):
+    def __init__(self, id, name=None, category=None):
         self.id = id
         self.name = name
         self.category = category
         type(self).all[self.id] = self
 
-    def __repr__(self):
-        return f'<Magazine {self.name}, Category: {self.category}>'
+    # def __repr__(self):
+    #     return f'<Magazine {self.name}>'
 
     @property
     def id(self):
@@ -52,7 +52,7 @@ class Magazine:
             INSERT INTO magazines (name, category)
             VALUES (?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.category))
+        CURSOR.execute(sql, (self.name, self.category,))
         CONN.commit()
         self.id = CURSOR.lastrowid
         type(self).all[self.id] = self

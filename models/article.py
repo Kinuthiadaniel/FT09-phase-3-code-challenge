@@ -9,7 +9,7 @@ class Article:
         self.content = content
         self.author_id = author_id
         self.magazine_id = magazine_id
-        # type(self).all[self.id] = self
+       
 
     def __repr__(self):
         return f'<Article {self.title}>'
@@ -106,8 +106,8 @@ class Article:
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.author_id,))
-        author_data = CURSOR.fetchone()
-        return Author(*author_data) if author_data else None
+        author = CURSOR.fetchone()
+        return Author(*author) if author else None
 
   
     def magazine(self):
@@ -118,5 +118,5 @@ class Article:
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.magazine_id,))
-        magazine_data = CURSOR.fetchone()
-        return Magazine(*magazine_data) if magazine_data else None
+        magazine = CURSOR.fetchone()
+        return Magazine(*magazine) if magazine else None
