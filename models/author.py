@@ -7,6 +7,7 @@ class Author:
         if id is not None:
             self.id = id
         self.name = name
+        self.save()
 
     def __repr__(self):
         return f'<Author {self.name}>'
@@ -53,17 +54,29 @@ class Author:
         author.save()
         return author
 
+    @classmethod
+    def instance_from_db(cls, row):
+        author = cls.all.get(row[0])
+        if author:
+            author.name = row[1]
+        else:
+            author = cls(id=row[0])
+            author.id= row[1]
+            cls.all[author.id] = author
+        return author
+
+    
     def articles(self):
         from models.article import Article 
         sql = """
-            SELECT articles.id, articles.title, articles.content
+            SELECT articles.id, articles.title, articles.content, articles.author_id, articles.magazine_id
             FROM articles
             INNER JOIN authors ON articles.author_id = authors.id
-            WHERE authors.id = ?
+            WHERE authors.id =?
         """
         CURSOR.execute(sql, (self.id,))
-        articles_data = CURSOR.fetchall()
-        return [Article(*data) for data in articles_data]
+        articles = CURSOR.fetchall()
+        return [Article.instance_from_db(row) for row in articles]
 
     def magazines(self):
         from models.magazine import Magazine 
@@ -76,5 +89,5 @@ class Author:
             GROUP BY magazines.id
         """
         CURSOR.execute(sql, (self.id,))
-        magazines_data = CURSOR.fetchall()
-        return [Magazine(*data) for data in magazines_data]
+        magazines = CURSOR.fetchall()
+        return [Magazine(*data) for data in magazines]

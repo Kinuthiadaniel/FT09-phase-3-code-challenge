@@ -9,6 +9,7 @@ class Article:
         self.content = content
         self.author_id = author_id
         self.magazine_id = magazine_id
+        self.save()
        
 
     def __repr__(self):
@@ -92,12 +93,27 @@ class Article:
             CONN.commit()
 
     @classmethod
-    def create(cls, title, content, author_id, magazine_id):
-        article = cls(title=title, content=content, author_id=author_id, magazine_id=magazine_id)
+    def create(cls, id, title, content, author_id, magazine_id):
+        article = cls(id = id, title=title, content=content, author_id=author_id, magazine_id=magazine_id)
         article.save()
         return article
+    
+    @classmethod
+    def instance_from_db(cls, row):
+        article = cls.all.get(row[0])
+        if article:
+            article.title = row[1]
+            article.content = row[2]
+            article.author_id = row[3]
+            article.magazine_id = row[4]
+        else:
+            article = cls(row[1], row[2], row[3], row[4])
+            article.id= row[0]
+            cls.all[article.id] = article
+        return article
 
-  
+
+   
     def author(self):
         from models.author import Author  
         sql = """
@@ -105,10 +121,9 @@ class Article:
             FROM authors
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.author_id,))
-        author = CURSOR.fetchone()
-        return Author(*author) if author else None
-
+        CURSOR.execute(sql, (self.id,))
+        rows = CURSOR.fetchall()
+        return [Author.instance_from_db(row) for row in rows]
   
     def magazine(self):
         from models.magazine import Magazine  

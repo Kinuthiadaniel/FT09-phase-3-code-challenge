@@ -7,10 +7,10 @@ class Magazine:
         self.id = id
         self.name = name
         self.category = category
-        type(self).all[self.id] = self
+        self.save()
 
-    # def __repr__(self):
-    #     return f'<Magazine {self.name}>'
+    def __repr__(self):
+        return f'<Magazine {self.name}>'
 
     @property
     def id(self):
@@ -68,8 +68,8 @@ class Magazine:
             CONN.commit()
 
     @classmethod
-    def create(cls, name, category):
-        magazine = cls(name=name, category=category)
+    def create(cls,id, name, category):
+        magazine = cls(id = id, name=name, category=category)
         magazine.save()
         return magazine
 
