@@ -8,11 +8,11 @@ def main():
         drop_table()
         create_tables()
         print("Tables created")
-        # author_name = input("Enter author's name: ")
-        # magazine_name = input("Enter magazine name: ")
-        # magazine_category = input("Enter magazine category: ")
-        # article_title = input("Enter article title: ")
-        # article_content = input("Enter article content: ")
+        author_name = input("Enter author's name: ")
+        magazine_name = input("Enter magazine name: ")
+        magazine_category = input("Enter magazine category: ")
+        article_title = input("Enter article title: ")
+        article_content = input("Enter article content: ")
 
 
         author = Author(1, "John")
@@ -45,8 +45,8 @@ def main():
         print("Magazine's Contributors:", magazine.contributors())
         print("Magazine's Article Titles:", magazine.article_titles())
         print("Magazine's Contributing Authors:", magazine.contributing_authors())
-        print("Article's Authors:", article.author())
-        print("Article's Magazine:", article.magazine())
+        # print("Article's Authors:", article.author())
+        # print("Article's Magazine:", article.magazine())
  
 
         
