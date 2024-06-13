@@ -1,15 +1,16 @@
-from __init__ import CURSOR, CONN
+from .__init__ import CURSOR, CONN
 
 class Article:
     all = {}
 
-    def __init__(self, id, title, content, author_id, magazine_id):
-        self.id = id
+    def __init__(self, id=None, title = None, content=None, author_id = None, magazine_id= None):
+        if id is not None:
+            self.id = id
         self.title = title
         self.content = content
         self.author_id = author_id
         self.magazine_id = magazine_id
-        self.save()
+        # self.save()
        
 
     def __repr__(self):
@@ -38,39 +39,41 @@ class Article:
             raise ValueError("Title must be between 2 and 256 characters")
         self._title = value
 
-    @property
-    def content(self):
-        return self._content
+    # @property
+    # def content(self):
+    #     return self._content
 
-    @content.setter
-    def content(self, value):
-        if not isinstance(value, str):
-            raise TypeError("Content must be of type str")
-        if len(value) == 0:
-            raise ValueError("Content must be longer than 0 characters")
-        self._content = value
+    # @content.setter
+    # def content(self, value):
+    #     if not isinstance(value, str):
+    #         raise TypeError("Content must be of type str")
+    #     if len(value) == 0:
+    #         raise ValueError("Content must be longer than 0 characters")
+    #     self._content = value
 
-    @property
-    def author_id(self):
-        return self._author_id
+    # @property
+    # def author_id(self):
+    #     return self._author_id
 
-    @author_id.setter
-    def author_id(self, value):
-        if isinstance(value, int):
-            self._author_id = value
-        else:
-            raise TypeError("author_id must be of type int")
+    # @author_id.setter
+    # def author_id(self, value):
+    #     if isinstance(value, int):
+    #         self._author_id = value
+    #     else:
+    #         raise ValueError("author_id must be of type int")
+        
+        
 
-    @property
-    def magazine_id(self):
-        return self._magazine_id
+    # @property
+    # def magazine_id(self):
+    #     return self._magazine_id
 
-    @magazine_id.setter
-    def magazine_id(self, value):
-        if isinstance(value, int):
-            self._magazine_id = value
-        else:
-            raise TypeError("magazine_id must be of type int")
+    # @magazine_id.setter
+    # def magazine_id(self, value):
+    #     if isinstance(value, int):
+    #         self._magazine_id = value
+    #     else:
+    #         raise ValueError("magazine_id must be of type int")
 
     def save(self):
         sql = """
@@ -93,8 +96,8 @@ class Article:
             CONN.commit()
 
     @classmethod
-    def create(cls, id, title, content, author_id, magazine_id):
-        article = cls(id = id, title=title, content=content, author_id=author_id, magazine_id=magazine_id)
+    def create(cls, title, content, author_id, magazine_id):
+        article = cls(title=title, content=content, author_id=author_id, magazine_id=magazine_id)
         article.save()
         return article
     

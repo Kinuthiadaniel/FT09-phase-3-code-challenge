@@ -1,13 +1,14 @@
-from __init__ import CURSOR, CONN
+from .__init__ import CURSOR, CONN
 
 class Magazine:
     all = {}
 
-    def __init__(self, id, name=None, category=None):
-        self.id = id
+    def __init__(self, id=None, name=None, category=None):
+        if id is not None:
+            self.id = id
         self.name = name
         self.category = category
-        self.save()
+        
 
     def __repr__(self):
         return f'<Magazine {self.name}>'
@@ -47,6 +48,13 @@ class Magazine:
             raise ValueError("Category must be longer than 0 characters")
         self._category = value
 
+    @classmethod
+    def drop_table(cls):
+        sql = """
+                DROP TABLE IF EXISTS magazines;
+                """
+        CURSOR.execute(sql)
+        CONN.commit()
     def save(self):
         sql = """
             INSERT INTO magazines (name, category)
@@ -68,8 +76,8 @@ class Magazine:
             CONN.commit()
 
     @classmethod
-    def create(cls,id, name, category):
-        magazine = cls(id = id, name=name, category=category)
+    def create(cls, name, category):
+        magazine = cls(name=name, category=category)
         magazine.save()
         return magazine
 
