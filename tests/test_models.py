@@ -1,4 +1,5 @@
 import unittest
+from models.__init__ import CURSOR, CONN
 from models.article import Article
 from models.author import Author
 from models.magazine import Magazine
@@ -66,7 +67,23 @@ class TestModels(unittest.TestCase):
     def test_magazine_contributing_authors(self):
         magazine = Magazine(1, "Tech Weekly", "Technology")
         contributing_authors = magazine.contributing_authors()
-        self.assertIsNone(contributing_authors)  
+        self.assertIsNone(contributing_authors) 
+    
+    # def test_instance_from_db(self):
+    #     '''contains method "instance_from_db()" that takes a table row and returns a Department instance.'''
+
+    #     Author.create("Payroll")
+
+    #     sql = """
+    #         SELECT * FROM authors
+    #     """
+    #     row = CURSOR.execute(sql).fetchone()
+    #     author = Author.instance_from_db(row)
+
+    #     assert ((row[0], row[1]) ==
+    #             (author.id, author.name) ==
+    #             (row[0], "Payroll"))
+
     
 
 if __name__ == '__main__':

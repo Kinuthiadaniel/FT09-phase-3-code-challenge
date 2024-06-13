@@ -102,6 +102,18 @@ class Article:
         return article
     
     @classmethod
+    def find_by_id(cls,id):
+        sql = """
+            SELECT *
+            FROM articles
+            WHERE id =?
+        """
+        CURSOR.execute(sql, (id,))
+        article = CURSOR.fetchone()
+        return cls.instance_from_db(article) if article else None
+
+    
+    @classmethod
     def instance_from_db(cls, row):
         article = cls.all.get(row[0])
         if article:
@@ -110,23 +122,36 @@ class Article:
             article.author_id = row[3]
             article.magazine_id = row[4]
         else:
-            article = cls(row[1], row[2], row[3], row[4])
+            article = cls(title =row[1], content=row[2], author_id=row[3], magazine_id=row[4])
             article.id= row[0]
             cls.all[article.id] = article
         return article
+    
+    
+    def author(self):
+        from models.author import Author
+        sql = """
+            SELECT authors.*
+            FROM articles
+            INNER JOIN authors ON articles.author_id = authors.id
+            WHERE articles.id = ?
+        """
+        CURSOR.execute(sql, (self.id,),)
+        row = CURSOR.fetchone()
+        return Author.instance_from_db(row) if row else None
 
 
    
-    def author(self):
-        from models.author import Author  
-        sql = """
-            SELECT id, name
-            FROM authors
-            WHERE id = ?
-        """
-        CURSOR.execute(sql, (self.id,))
-        rows = CURSOR.fetchall()
-        return [Author.instance_from_db(row) for row in rows]
+    # def author(self):
+    #     from models.author import Author  
+    #     sql = """
+    #         SELECT id, name
+    #         FROM authors
+    #         WHERE id = ?
+    #     """
+    #     CURSOR.execute(sql, (self.id,))
+    #     rows = CURSOR.fetchall()
+    #     return [Author.instance_from_db(row) for row in rows]
   
     def magazine(self):
         from models.magazine import Magazine  

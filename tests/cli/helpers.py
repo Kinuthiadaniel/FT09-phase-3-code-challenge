@@ -7,10 +7,11 @@ def exit_program():
     exit()
 
 def list_articles():
-    article = input("Enter article: ")
-    authors = Author.articles(article)
-    for author in authors:
-        print(author)
+    author_id = int(input("Enter author id: "))
+    author = Author.find_by_id(author_id)
+    articles = author.articles()
+    for article in articles:
+        print(article)
 
 def create_author():
     name = input("Enter author name: ")
@@ -32,8 +33,8 @@ def create_magazine():
 def create_article():
     title = input("Enter article title: ")
     content = input("Enter article content: ")
-    author_id = input("Enter author id: ")
-    magazine_id = input("Enter magazine id: ")
+    author_id = int(input("Enter author id: "))
+    magazine_id = int(input("Enter magazine id: "))
     try:
         article = Article.create(title, content, author_id, magazine_id)
         print(f"Article created: ID ={article}")
@@ -41,11 +42,35 @@ def create_article():
         print(f"Error creating Article: ",e)
 
 def author_of_the_article():
-    article_id = input("Enter article id: ")
+    article_id = int(input("Enter article id: "))
+    article = Article.find_by_id(article_id)
     try:
-        author = Article.author(article_id)
+        author = article.author()
         print(f"Author of the article: {author}")
     except Exception as e:
         print(f"Error finding author of the article: ",e)
+
+def contributor():
+    magazine_id = int(input("Enter magazine id: "))
+    try:
+        magazine = Magazine.find_by_id(magazine_id)
+        print(type(magazine_id))
+        contributors = magazine.contributors()
+        print(contributors)
+        for contributor in contributors:
+            print(contributor)
+    except Exception as e:
+        print(f"Error finding contributors: ",e)
+
+def magazines_by_author():
+    author_id = int(input("Enter author id: "))
+    author = Author.find_by_id(author_id)
+    try:
+        magazines = author.magazines()
+        for magazine in magazines:
+            print(magazine)
+    except Exception as e:
+        print(f"Error finding magazines: ",e)
+
 
 

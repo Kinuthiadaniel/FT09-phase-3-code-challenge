@@ -7,7 +7,7 @@ class Author:
         if id is not None:
             self.id = id
         self.name = name
-        self.save()
+        # self.save()
 
     def __repr__(self):
         return f'<Author {self.name}>'
@@ -57,37 +57,47 @@ class Author:
     @classmethod
     def instance_from_db(cls, row):
         author = cls.all.get(row[0])
+        print("hello")
         if author:
             author.name = row[1]
+            
         else:
-            author = cls(id=row[0])
-            author.id= row[1]
+            author = cls(name=row[1])
+            author.id= row[0]
             cls.all[author.id] = author
+            
         return author
 
-    
+    @classmethod
+    def find_by_id(cls,id):
+        sql = """
+            SELECT *
+            FROM authors
+            WHERE id =?
+        """
+        CURSOR.execute(sql, (id,))
+        author_data = CURSOR.fetchone()
+        return cls.instance_from_db(author_data)
     def articles(self):
         from models.article import Article 
         sql = """
-            SELECT articles.id, articles.title, articles.content, articles.author_id, articles.magazine_id
+            SELECT *
             FROM articles
             INNER JOIN authors ON articles.author_id = authors.id
             WHERE authors.id =?
         """
-        CURSOR.execute(sql, (self.id,))
+        CURSOR.execute(sql, (self.id,),)
         articles = CURSOR.fetchall()
         return [Article.instance_from_db(row) for row in articles]
 
     def magazines(self):
         from models.magazine import Magazine 
         sql = """
-            SELECT magazines.id, magazines.name, magazines.category
+            SELECT magazines.*
             FROM articles
-            LEFT JOIN magazines ON articles.magazine_id = magazines.id
-            INNER JOIN authors ON articles.author_id = authors.id
-            WHERE authors.id = ?
-            GROUP BY magazines.id
+            INNER JOIN magazines ON articles.magazine_id = magazines.id
+            WHERE articles.author_id = ?
         """
-        CURSOR.execute(sql, (self.id,))
+        CURSOR.execute(sql, (self.id,),)
         magazines = CURSOR.fetchall()
-        return [Magazine(*data) for data in magazines]
+        return [Magazine.instance_from_db(data) for data in magazines]

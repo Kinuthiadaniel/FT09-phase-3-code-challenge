@@ -80,31 +80,53 @@ class Magazine:
         magazine = cls(name=name, category=category)
         magazine.save()
         return magazine
+    @classmethod
+    def instance_from_db(cls, row):
+        magazine = cls.all.get(row[0])
+        if magazine:
+            magazine.name = row[1]
+            magazine.category = row[2]
+        else:
+            magazine = cls(name = row[1], category= row[2])
+            magazine.id= row[0]
+            cls.all[magazine.id] = magazine
+        return magazine
+    
+    @classmethod
+    def find_by_id(cls,id):
+        sql = """
+            SELECT *
+            FROM magazines
+            WHERE id =?
+        """
+        CURSOR.execute(sql, (id,))
+        magazine = CURSOR.fetchone()
+        return cls.instance_from_db(magazine) if magazine else None
 
     def articles(self):
         from models.article import Article  
         sql = """
-            SELECT articles.id, articles.title, articles.content, articles.author_id, articles.magazine_id
+            SELECT *
             FROM articles
             INNER JOIN magazines ON articles.magazine_id = magazines.id
             WHERE magazines.id = ?
         """
         CURSOR.execute(sql, (self.id,))
         articles = CURSOR.fetchall()
-        return [Article(*row) for row in articles]
+        return [Article.instance_from_db(row) for row in articles]
 
     def contributors(self):
         from models.author import Author  
         sql = """
-            SELECT authors.id, authors.name
+            SELECT *
             FROM articles
             INNER JOIN authors ON articles.author_id = authors.id
             WHERE articles.magazine_id = ?
-            GROUP BY authors.id
         """
         CURSOR.execute(sql, (self.id,))
         contributors = CURSOR.fetchall()
-        return [Author(*row) for row in contributors]
+        print("contributors")
+        return [Author.instance_from_db(row) for row in contributors]
 
     def article_titles(self):
         sql = """
